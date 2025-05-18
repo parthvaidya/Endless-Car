@@ -64,7 +64,7 @@ public class EndlessPool : MonoBehaviour
 
                 sections[i] = GetRandomSectionFromPool();
 
-                sections[i].transform.position = new Vector3(lastSectionPosition.x, 0, lastSectionPosition.z + sectionLength * sections.Length); //change to 0  -100 if required
+                sections[i].transform.position = new Vector3(lastSectionPosition.x, 0, lastSectionPosition.z + sectionLength * sections.Length);
                 sections[i].SetActive(true);
 
             }
