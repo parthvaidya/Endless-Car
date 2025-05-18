@@ -4,31 +4,55 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
-    [SerializeField]
-    Rigidbody rb;
+
+    [SerializeField] Rigidbody rb;
+
 
     [SerializeField] Transform gameModel;
+
+    [SerializeField] ExplosionHandler explosionHandler;
+
+
     float accelerationMultiplier = 3;
     float brakeMultiplier = 15;
     float steerMultiplier = 5;
     float MaxSteerVelocit = 2;
     float MaxForwardVelocity = 30;
 
+    bool isExploded = false;
+    float startingPoint;
+    float distanceTravelled = 0;
+    public float DistanceTravelled => distanceTravelled;
+
     Vector2 input = Vector2.zero;
     // Start is called before the first frame update
     void Start()
     {
-        
+        startingPoint = transform.position.z;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (isExploded) return;
+
         gameModel.transform.rotation = Quaternion.Euler(0, rb.velocity.x * 5, 0);
+
+        distanceTravelled = transform.position.z - startingPoint;
+    
     }
 
     private void FixedUpdate()
     {
+        if (isExploded)
+        {
+            rb.drag = rb.velocity.z * 0.1f;
+            rb.drag = Mathf.Clamp(rb.drag, 1.5f, 10);
+
+            rb.MovePosition(Vector3.Lerp(transform.position, new Vector3(0, 0, transform.position.z), Time.deltaTime * 0.5f));
+            return;
+        }
+
         //accelerate
         if (input.y > 0)
             Accelerate();
@@ -92,5 +116,17 @@ public class Car : MonoBehaviour
         inputVector.Normalize();
 
         input = inputVector;
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Hit");
+
+        Vector3 velocity = rb.velocity;
+
+        explosionHandler.Explode(velocity * 45);
+
+        isExploded = true;
     }
 }
