@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
+
 
 public class Car : MonoBehaviour
 {
@@ -18,8 +18,10 @@ public class Car : MonoBehaviour
     float steerMultiplier = 5;
     float MaxSteerVelocit = 2;
     float MaxForwardVelocity = 30;
+    
 
     bool isExploded = false;
+    
     float startingPoint;
     float distanceTravelled = 0;
     public float DistanceTravelled => distanceTravelled;
@@ -39,9 +41,11 @@ public class Car : MonoBehaviour
         gameModel.transform.rotation = Quaternion.Euler(0, rb.velocity.x * 5, 0);
 
         distanceTravelled = transform.position.z - startingPoint;
-    
+
+        
     }
 
+    
     private void FixedUpdate()
     {
         if (isExploded)
@@ -102,7 +106,10 @@ public class Car : MonoBehaviour
 
             normalizedX = Mathf.Clamp(normalizedX, -1.0f, 1.0f);
 
-            rb.velocity = new Vector3(normalizedX * MaxSteerVelocit, 0, rb.velocity.z);
+            //rb.velocity = new Vector3(normalizedX * MaxSteerVelocit, 0, rb.velocity.z);
+
+            Vector3 targetVelocity = new Vector3(normalizedX * MaxSteerVelocit, 0, rb.velocity.z);
+            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, Time.fixedDeltaTime * 2);
 
         }
         else
@@ -113,9 +120,11 @@ public class Car : MonoBehaviour
 
     public void SetInput(Vector2 inputVector)
     {
-        inputVector.Normalize();
+        //inputVector.Normalize();
 
-        input = inputVector;
+        //input = inputVector;
+
+        input = Vector2.ClampMagnitude(inputVector, 1f);
     }
 
 
@@ -123,10 +132,18 @@ public class Car : MonoBehaviour
     {
         Debug.Log("Hit");
 
+        if (explosionHandler == null)
+        {
+            Debug.LogError("ExplosionHandler is not assigned!");
+            return;
+        }
+
         Vector3 velocity = rb.velocity;
 
         explosionHandler.Explode(velocity * 45);
 
         isExploded = true;
     }
+
+    
 }

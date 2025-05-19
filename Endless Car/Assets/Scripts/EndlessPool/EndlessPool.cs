@@ -66,11 +66,22 @@ public class EndlessPool : MonoBehaviour
 
                 sections[i].transform.position = new Vector3(lastSectionPosition.x, 0, lastSectionPosition.z + sectionLength * sections.Length);
                 sections[i].SetActive(true);
+                EnableCollidersInChildren(sections[i]);
 
             }
         }
 
     
+    }
+
+    void EnableCollidersInChildren(GameObject section)
+    {
+        Collider[] colliders = section.GetComponentsInChildren<Collider>(true);
+        foreach (Collider col in colliders)
+        {
+            col.enabled = true;
+            col.gameObject.SetActive(true); // Just in case the child GameObject is disabled
+        }
     }
 
     GameObject GetRandomSectionFromPool()
