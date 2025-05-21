@@ -6,7 +6,7 @@ using UnityEngine;
 public class Distance : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI distanceTravelled;
-    Car playerCarTransform;
+    [SerializeField] Car playerCarTransform;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +16,6 @@ public class Distance : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        distanceTravelled.text = playerCarTransform.DistanceTravelled.ToString("0000000");
+        distanceTravelled.text = playerCarTransform.DistanceTravelled.ToString("0000000") + " km";
     }
 }

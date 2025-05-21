@@ -14,7 +14,7 @@ public class ExplosionHandler : MonoBehaviour
         Debug.Log("Found rigidbodies: " + rigidbodies.Length);
 
     }
-    // Start is called before the first frame update
+    
     void Start()
     {
         //Explode(Vector3.forward);
@@ -30,13 +30,13 @@ public class ExplosionHandler : MonoBehaviour
         {
             rb.transform.parent = null;
 
-            rb.GetComponent<MeshCollider>().enabled = true;
+            rb.GetComponent<Collider>().enabled = true;
 
             rb.gameObject.SetActive(true);
             rb.isKinematic = false;
             rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-            rb.AddForce(Vector3.up * 200 + externalForce, ForceMode.Force);
+            rb.AddForce(Vector3.up * 50 + externalForce* 0.2f, ForceMode.Force);
             rb.AddTorque(Random.insideUnitSphere * 0.5f, ForceMode.Impulse);
 
         }

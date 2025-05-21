@@ -1,5 +1,7 @@
 
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 public class Car : MonoBehaviour
@@ -13,11 +15,18 @@ public class Car : MonoBehaviour
     [SerializeField] ExplosionHandler explosionHandler;
 
 
-    float accelerationMultiplier = 3;
+    [SerializeField] float accelerationIncreaseRate = 0.1f;
+    [SerializeField] float maxSpeedIncreaseRate = 0.5f;
+
+    [SerializeField] float maxAccelerationLimit = 15f;
+    [SerializeField] float maxVelocityLimit = 150f;
+
+
+    float accelerationMultiplier = 6;
     float brakeMultiplier = 15;
     float steerMultiplier = 5;
-    float MaxSteerVelocit = 2;
-    float MaxForwardVelocity = 30;
+    float MaxSteerVelocity = 2;
+    float MaxForwardVelocity = 60;
     
 
     bool isExploded = false;
@@ -42,7 +51,7 @@ public class Car : MonoBehaviour
 
         distanceTravelled = transform.position.z - startingPoint;
 
-        
+        IncreaseSpeedOverTime();
     }
 
     
@@ -102,13 +111,13 @@ public class Car : MonoBehaviour
             speedBaseSteerLimit = Mathf.Clamp01(speedBaseSteerLimit);
 
             rb.AddForce(rb.transform.right * steerMultiplier * input.x * speedBaseSteerLimit);
-            float normalizedX = rb.velocity.x / MaxSteerVelocit;
+            float normalizedX = rb.velocity.x / MaxSteerVelocity;
 
             normalizedX = Mathf.Clamp(normalizedX, -1.0f, 1.0f);
 
             //rb.velocity = new Vector3(normalizedX * MaxSteerVelocit, 0, rb.velocity.z);
 
-            Vector3 targetVelocity = new Vector3(normalizedX * MaxSteerVelocit, 0, rb.velocity.z);
+            Vector3 targetVelocity = new Vector3(normalizedX * MaxSteerVelocity, 0, rb.velocity.z);
             rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, Time.fixedDeltaTime * 2);
 
         }
@@ -120,11 +129,31 @@ public class Car : MonoBehaviour
 
     public void SetInput(Vector2 inputVector)
     {
-        //inputVector.Normalize();
+        inputVector.Normalize();
 
-        //input = inputVector;
+        input = inputVector;
 
-        input = Vector2.ClampMagnitude(inputVector, 1f);
+        //input = Vector2.ClampMagnitude(inputVector, 1f);
+    }
+
+    IEnumerator SlowDownTime()
+    {
+        while(Time.timeScale > 0.2f)
+        {
+            Time.timeScale -= Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+
+        while(Time.timeScale < 1.0f)
+        {
+            Time.timeScale += Time.deltaTime;
+            yield return null;
+        }
+
+        Time.timeScale = 1.0f;
     }
 
 
@@ -140,10 +169,30 @@ public class Car : MonoBehaviour
 
         Vector3 velocity = rb.velocity;
 
-        explosionHandler.Explode(velocity * 45);
+        explosionHandler.Explode(velocity * 5);
 
         isExploded = true;
+
+        StartCoroutine(SlowDownTime());
     }
 
-    
+    public float GetCurrentSpeed()
+    {
+      
+        return rb.velocity.magnitude * 3.6f;
+    }
+    void IncreaseSpeedOverTime()
+    {
+        if (accelerationMultiplier < maxAccelerationLimit)
+        {
+            accelerationMultiplier += accelerationIncreaseRate * Time.deltaTime;
+        }
+
+        if (MaxForwardVelocity < maxVelocityLimit)
+        {
+            MaxForwardVelocity += maxSpeedIncreaseRate * Time.deltaTime;
+        }
+    }
+
+
 }
