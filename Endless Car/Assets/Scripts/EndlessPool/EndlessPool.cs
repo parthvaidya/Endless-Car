@@ -71,6 +71,7 @@ public class EndlessPool : MonoBehaviour
                 EnableCollidersInChildren(sections[i]);
 
                 SpawnCoinsInSection(sections[i]);
+                SpawnCarsInSection(sections[i]);
 
             }
         }
@@ -110,6 +111,44 @@ public class EndlessPool : MonoBehaviour
         }
     }
 
+    //void SpawnCarsInSection(GameObject section)
+    //{
+    //    Transform road = section.transform.Find("Road");
+    //    if (road == null) return;
+
+    //    List<Transform> lanes = new List<Transform>();
+    //    foreach (Transform lane in road)
+    //    {
+    //        lanes.Add(lane);
+    //    }
+
+    //    // 30% chance to spawn a car in this section
+    //    if (Random.value > 0.3f) return;
+
+    //    Transform randomLane = lanes[Random.Range(0, lanes.Count)];
+
+    //    float randomZOffset = Random.Range(-20f, 20f);
+    //    float randomXOffset = Random.Range(-8f, 8f);
+
+    //    Vector3 spawnPos = randomLane.position + new Vector3(randomXOffset, 0.5f, randomZOffset);
+
+    //    GameObject car = CarObstaclePooler.Instance.GetCar();
+    //    car.transform.position = spawnPos;
+    //    car.transform.SetParent(section.transform);
+    //    car.SetActive(true);
+    //}
+
+    void SpawnCarsInSection(GameObject section)
+    {
+        Transform road = section.transform.Find("Road");
+        if (road == null) return;
+
+        // 30% chance to spawn a car in this section
+        if (Random.value > 0.3f) return;
+
+        // We pass the base road position to the factory, and it handles X/Z offsets
+        VehicleFactory.Instance.SpawnRandomVehicle(road.position, section.transform);
+    }
     void EnableCollidersInChildren(GameObject section)
     {
         Collider[] colliders = section.GetComponentsInChildren<Collider>(true);
