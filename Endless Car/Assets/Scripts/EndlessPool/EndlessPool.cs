@@ -10,6 +10,8 @@ public class EndlessPool : MonoBehaviour
     Transform playerCarTransform;
     WaitForSeconds waitfor100ms = new WaitForSeconds(0.1f);
 
+    //[SerializeField] private int coinsPerSection = 3;
+
     const float sectionLength = 26;
     // Start is called before the first frame update
     void Start()
@@ -68,10 +70,44 @@ public class EndlessPool : MonoBehaviour
                 sections[i].SetActive(true);
                 EnableCollidersInChildren(sections[i]);
 
+                SpawnCoinsInSection(sections[i]);
+
             }
         }
 
     
+    }
+
+
+    void SpawnCoinsInSection(GameObject section)
+    {
+        Transform road = section.transform.Find("Road");
+        if (road == null) return;
+
+        List<Transform> lanes = new List<Transform>();
+        foreach (Transform lane in road)
+        {
+            lanes.Add(lane);
+        }
+
+        int coinsToSpawn = Random.Range(1, 4); // 1–3 coins per section randomly
+
+        for (int i = 0; i < coinsToSpawn; i++)
+        {
+            if (Random.value > 0.5f) continue;
+
+            Transform randomLane = lanes[Random.Range(0, lanes.Count)];
+
+            float randomXOffset = Random.Range(-5f, 5f); // horizontal variation
+            float randomZOffset = Random.Range(-20f, 20f);   // depth variation
+
+            Vector3 spawnPos = randomLane.position + new Vector3(randomXOffset, 1f, randomZOffset);
+
+            GameObject coin = CoinPooler.Instance.GetCoin();
+            coin.transform.position = spawnPos;
+            coin.transform.SetParent(section.transform);
+            coin.SetActive(true);
+        }
     }
 
     void EnableCollidersInChildren(GameObject section)
