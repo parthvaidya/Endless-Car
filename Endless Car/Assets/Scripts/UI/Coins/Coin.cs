@@ -10,6 +10,8 @@ public class Coin : MonoBehaviour
         {
             gameObject.SetActive(false);
             CoinUIManager.Instance.AddCoin(); // Update UI
+            //GameManager.Instance.CoinCollected();
+            SoundManager.Instance.PlayCoin();
         }
     }
 }

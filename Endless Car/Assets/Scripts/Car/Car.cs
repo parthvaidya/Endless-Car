@@ -1,5 +1,6 @@
 
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,6 +21,8 @@ public class Car : MonoBehaviour
 
     [SerializeField] float maxAccelerationLimit = 15f;
     [SerializeField] float maxVelocityLimit = 150f;
+
+    [SerializeField] private TextMeshProUGUI crashText;
 
 
     float accelerationMultiplier = 6;
@@ -75,12 +78,22 @@ public class Car : MonoBehaviour
 
         //brake
         if (input.y < 0)
+        {
+            SoundManager.Instance.PlayBrake();
             Brake();
+        }
+            
+
 
         Steer();
 
         if (rb.velocity.z <= 0)
             rb.velocity = Vector3.zero;
+
+        if (rb.velocity.z > 5)
+            SoundManager.Instance.PlayEngineRunning();
+        else
+            SoundManager.Instance.PlayEngineIdle();
     }
 
     void Accelerate()
@@ -173,7 +186,17 @@ public class Car : MonoBehaviour
 
         isExploded = true;
 
+        GameManager.Instance.CarExploded();
+
+        SoundManager.Instance.PlayCarCrash();
+
+        
+
         StartCoroutine(SlowDownTime());
+
+        if (crashText != null)
+            SoundManager.Instance.PlayCarDeath();
+            crashText.gameObject.SetActive(true);
     }
 
     public float GetCurrentSpeed()

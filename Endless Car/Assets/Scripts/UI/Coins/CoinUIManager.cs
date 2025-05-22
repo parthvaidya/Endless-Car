@@ -21,4 +21,21 @@ public class CoinUIManager : MonoBehaviour
         coinCount++;
         coinText.text = "Coins: " + coinCount;
     }
+
+    //[SerializeField] private TextMeshProUGUI coinText;
+
+    //private void OnEnable()
+    //{
+    //    GameManager.Instance.OnCoinCollected += UpdateUI;
+    //}
+
+    //private void OnDisable()
+    //{
+    //    GameManager.Instance.OnCoinCollected -= UpdateUI;
+    //}
+
+    //private void UpdateUI(int totalCoins)
+    //{
+    //    coinText.text = "Coins: " + totalCoins;
+    //}
 }

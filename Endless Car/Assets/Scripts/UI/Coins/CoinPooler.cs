@@ -34,7 +34,7 @@ public class CoinPooler : MonoBehaviour
                 return coin;
         }
 
-        // Optional: expand pool if all coins are used
+        
         GameObject newCoin = Instantiate(coinPrefab);
         newCoin.SetActive(false);
         coinPool.Add(newCoin);
